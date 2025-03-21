@@ -1,0 +1,14 @@
+version: "3"
+
+networks:
+  nginx_nginx-network:
+    external: true
+
+services:
+  server:
+    image: ghcr.io/bnorm/broadcast-server:latest
+    restart: unless-stopped
+    networks:
+      - nginx_nginx-network
+    environment:
+      BEARER_TOKEN: ${BEARER_TOKEN}

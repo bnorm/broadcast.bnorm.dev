@@ -1,0 +1,24 @@
+.gradle
+.kotlin
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!src/main/**/build/
+!src/test/**/build/
+
+### IntelliJ IDEA ###
+.idea/*
+!.idea/runConfigurations
+!.idea/inspectionProfiles
+!.idea/codeStyles
+*.iws
+*.iml
+*.ipr
+out/
+!src/main/**/out/
+!src/test/**/out/
+
+### Mac OS ###
+.DS_Store
+
+# Storyboard saved state files
+.storyboard/

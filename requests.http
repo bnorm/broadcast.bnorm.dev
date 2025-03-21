@@ -1,0 +1,21 @@
+###
+GET http://localhost:8080/channels/sample/subscribe
+Accept: text/event-stream
+
+###
+GET http://localhost:8080/channels
+Authorization: Bearer token
+Accept: application/json
+
+###
+POST http://localhost:8080/channels/sample
+Authorization: Bearer token
+Content-Type: application/json
+
+{
+    "Hello": "Hello"
+}
+
+###
+DELETE http://localhost:8080/channels/sample
+Authorization: Bearer token

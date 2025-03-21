@@ -1,0 +1,51 @@
+name: Project Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, labeled, unlabeled, synchronize]
+
+env:
+  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false"
+
+jobs:
+
+  gradle-build:
+    name: "Build"
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      checks: write
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: gradle/wrapper-validation-action@v2
+
+    - name: Configure JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: zulu
+        java-version: 17
+
+    - name: Configure Gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        build-scan-publish: true
+        build-scan-terms-of-service-url: "https://gradle.com/terms-of-service"
+        build-scan-terms-of-service-agree: "yes"
+
+    - name: Build Project
+      run: ./gradlew check publishImage --parallel
+      env:
+        GITHUB_USERNAME: ${{ github.actor }}
+        GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish Test Report
+      if: success() || failure()
+      uses: mikepenz/action-junit-report@v4
+      with:
+        report_paths: '**/build/test-results/test/TEST-*.xml'
