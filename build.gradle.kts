@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("io.ktor.plugin") version "3.1.1"
+    id("io.ktor.plugin")
 }
 
 application.mainClass = "dev.bnorm.broadcast.MainKt"

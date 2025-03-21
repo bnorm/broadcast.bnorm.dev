@@ -1,15 +1,15 @@
 ###
-GET http://localhost:8080/channels/sample/subscribe
+GET {{hostname}}/channels/sample/subscribe
 Accept: text/event-stream
 
 ###
-GET http://localhost:8080/channels
-Authorization: Bearer token
+GET {{hostname}}/channels
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
-POST http://localhost:8080/channels/sample
-Authorization: Bearer token
+POST {{hostname}}/channels/sample
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -17,5 +17,5 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:8080/channels/sample
-Authorization: Bearer token
+DELETE {{hostname}}/channels/sample
+Authorization: Bearer {{token}}

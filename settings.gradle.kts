@@ -11,7 +11,7 @@ pluginManagement {
 
         kotlin("jvm") version kotlinVersion
         kotlin("plugin.serialization") version kotlinVersion
-        kotlin("plugin.power-assert") version kotlinVersion
+        id("io.ktor.plugin") version "3.1.1"
     }
 }
 
