@@ -12,6 +12,7 @@ application.mainClass = "dev.bnorm.broadcast.MainKt"
 dependencies {
     implementation("io.ktor:ktor-server-core")
     implementation("io.ktor:ktor-server-call-logging")
+    implementation("io.ktor:ktor-server-call-id")
     implementation("io.ktor:ktor-server-netty")
     implementation("io.ktor:ktor-server-status-pages")
     implementation("io.ktor:ktor-server-cors")
@@ -21,11 +22,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json")
     implementation("io.ktor:ktor-server-config-yaml")
 
-    implementation("org.slf4j:slf4j-simple:2.0.16")
-
-//    testImplementation("io.ktor:ktor-server-test-host-jvm:$ktor_version")
-//    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
-//    testImplementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    implementation("ch.qos.logback:logback-classic:1.5.18")
 }
 
 kotlin {

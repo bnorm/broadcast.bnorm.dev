@@ -4,6 +4,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
@@ -24,7 +25,13 @@ private const val AUTH_NAME = "BEARER"
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun Application.main() {
-    install(CallLogging)
+    install(CallId) {
+        retrieveFromHeader(HttpHeaders.XRequestId)
+        generate(4)
+    }
+    install(CallLogging) {
+        callIdMdc("call-id")
+    }
 
     val json = DefaultJson
     install(ContentNegotiation) {
