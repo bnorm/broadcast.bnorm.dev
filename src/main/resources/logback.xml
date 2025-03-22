@@ -5,7 +5,7 @@
         </encoder>
     </appender>
 
-    <logger name="io.ktor" level="trace"/>
+    <logger name="io.ktor" level="debug"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>
