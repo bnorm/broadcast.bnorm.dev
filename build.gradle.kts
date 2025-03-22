@@ -14,6 +14,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core:$ktor_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
+    implementation("io.ktor:ktor-server-cors:$ktor_version")
     implementation("io.ktor:ktor-server-sse:$ktor_version")
     implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
