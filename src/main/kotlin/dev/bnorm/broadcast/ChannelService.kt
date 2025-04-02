@@ -8,28 +8,43 @@ import kotlin.time.Duration.Companion.hours
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChannelService {
+    private class Channel(
+        val state: MutableStateFlow<ChannelEvent>,
+        val public: Boolean = false,
+    )
+
     private val channelMutex = Mutex()
-    private val channels = mutableMapOf<String, MutableStateFlow<ChannelEvent>>()
+    private val channels = mutableMapOf<String, Channel>()
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     fun get(channelId: String): StateFlow<ChannelEvent>? {
-        return channels[channelId]
+        return channels[channelId]?.state
     }
 
     fun getIds(): Set<String> {
         return channels.keys
     }
 
-    suspend fun send(channelId: String, data: ChannelEvent): StateFlow<ChannelEvent>? {
+    fun send(channelId: String, data: ChannelEvent): Boolean {
+        val channel = channels[channelId]
+        if (channel != null && channel.public) {
+            channel.state.value = data
+            return true
+        } else {
+            return false
+        }
+    }
+
+    suspend fun sendOrCreate(channelId: String, data: ChannelEvent, public: Boolean = false): StateFlow<ChannelEvent>? {
         val created = channelMutex.withLock {
-            val state = channels[channelId]
-            if (state != null) {
-                state.value = data
+            val channel = channels[channelId]
+            if (channel != null) {
+                channel.state.value = data
                 return null
             }
 
             val created = MutableStateFlow(data)
-            channels[channelId] = created
+            channels[channelId] = Channel(created, public)
             created
         }
 
@@ -44,14 +59,14 @@ class ChannelService {
         return created
     }
 
-    suspend fun delete(channelId: String): StateFlow<ChannelEvent>? {
+    suspend fun delete(channelId: String): Boolean {
         channelMutex.withLock {
             val channel = channels.remove(channelId)
             if (channel != null) {
-                channel.value = ChannelEvent.End
-                return channel
+                channel.state.value = ChannelEvent.End
+                return true
             } else {
-                return null
+                return false
             }
         }
     }

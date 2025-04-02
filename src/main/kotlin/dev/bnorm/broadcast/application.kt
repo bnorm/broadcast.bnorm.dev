@@ -12,12 +12,9 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sse.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.takeWhile
 
-private const val AUTH_NAME = "BEARER"
-
-@OptIn(ExperimentalCoroutinesApi::class)
+@Suppress("unused") // Loaded by Ktor
 fun Application.main() {
     install(CallId) {
         retrieveFromHeader(HttpHeaders.XRequestId)
@@ -34,10 +31,10 @@ fun Application.main() {
 
     val token = environment.config.property("bearer.token").getString()
     install(Authentication) {
-        bearer(AUTH_NAME) {
+        bearer {
             authenticate { credential ->
                 when (credential.token) {
-                    token -> Unit
+                    token -> UserIdPrincipal("admin")
                     else -> null
                 }
             }
@@ -70,29 +67,37 @@ fun Application.main() {
             }
         }
 
-        authenticate(AUTH_NAME) {
+        authenticate(optional = true) {
+            post("/channels/{channelId}") {
+                val channelId = call.parameters["channelId"]!!
+                val data = ChannelEvent.Data(call.receiveText())
+
+                val principal = call.principal<UserIdPrincipal>()
+                if (principal == null) {
+                    when (channelService.send(channelId, data)) {
+                        true -> call.respond(HttpStatusCode.OK)
+                        false -> call.respond(HttpStatusCode.Unauthorized)
+                    }
+                } else {
+                    val public = call.queryParameters["public"]?.toBoolean() ?: false
+                    when (channelService.sendOrCreate(channelId, data, public)) {
+                        null -> call.respond(HttpStatusCode.OK)
+                        else -> call.respond(HttpStatusCode.Created)
+                    }
+                }
+            }
+        }
+
+        authenticate {
             get("/channels") {
                 call.respond(channelService.getIds())
             }
 
-            post("/channels/{channelId}") {
-                val channel = call.parameters["channelId"]!!
-                val data = ChannelEvent.Data(call.receiveText())
-                val created = channelService.send(channel, data)
-                if (created != null) {
-                    call.respond(HttpStatusCode.Created)
-                } else {
-                    call.respond(HttpStatusCode.OK)
-                }
-            }
-
             delete("/channels/{channelId}") {
                 val channelId = call.parameters["channelId"]!!
-                val deleted = channelService.delete(channelId)
-                if (deleted != null) {
-                    call.respond(HttpStatusCode.OK)
-                } else {
-                    call.respond(HttpStatusCode.NotFound)
+                when (channelService.delete(channelId)) {
+                    true -> call.respond(HttpStatusCode.OK)
+                    false -> call.respond(HttpStatusCode.NotFound)
                 }
             }
         }

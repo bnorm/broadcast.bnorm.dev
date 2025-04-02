@@ -3,6 +3,14 @@ GET {{hostname}}/channels/sample/subscribe
 Accept: text/event-stream
 
 ###
+POST {{hostname}}/channels/sample
+Content-Type: application/json
+
+{
+  "Hello": "Anonymous"
+}
+
+###
 GET {{hostname}}/channels
 Authorization: Bearer {{token}}
 Accept: application/json
@@ -13,7 +21,16 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "Hello": "Hello"
+    "Hello": "Admin"
+}
+
+###
+POST {{hostname}}/channels/sample?public=true
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "Hello": "Admin"
 }
 
 ###
