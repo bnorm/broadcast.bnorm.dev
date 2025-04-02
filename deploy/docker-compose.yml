@@ -12,3 +12,4 @@ services:
       - nginx_nginx-network
     environment:
       BEARER_TOKEN: ${BEARER_TOKEN}
+      PORT: 8080
