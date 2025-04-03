@@ -42,6 +42,7 @@ fun Application.main() {
     }
 
     install(CORS) {
+        allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.CacheControl)
         anyHost()
     }
